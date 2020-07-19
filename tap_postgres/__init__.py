@@ -415,8 +415,8 @@ def do_discovery(conn_config):
             WHERE datistemplate = false
               AND datname != 'rdsadmin'"""
 
-            if conn_config.get('filter_dbs'):
-                sql = post_db.filter_dbs_sql_clause(sql, conn_config['filter_dbs'])
+            if conn_config.get('dbname'):
+                sql = post_db.filter_dbs_sql_clause(sql, conn_config['dbname'])
 
             LOGGER.info("Running DB discovery: %s with itersize %s", sql, cur.itersize)
             cur.execute(sql)
