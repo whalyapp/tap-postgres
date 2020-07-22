@@ -258,7 +258,8 @@ SELECT
                                         END,
                                        information_schema._pg_truetypmod(a.*, pgt.*))::information_schema.cardinal_number AS numeric_scale,
   pgt.typcategory                       = 'A' AS is_array,
-  COALESCE(subpgt.typtype, pgt.typtype) = 'e' AS is_enum
+  COALESCE(subpgt.typtype, pgt.typtype) = 'e' AS is_enum,
+  concat_ws('.', '"' || n.nspname || '"', pg_class.relname) as table_path
 FROM pg_attribute a
 LEFT JOIN pg_type AS pgt ON a.atttypid = pgt.oid
 JOIN pg_class
@@ -276,7 +277,9 @@ WHERE attnum > 0
 AND NOT a.attisdropped
 AND pg_class.relkind IN ('r', 'v', 'm')
 AND n.nspname NOT in ('pg_toast', 'pg_catalog', 'information_schema')
-AND has_column_privilege(pg_class.oid, attname, 'SELECT') = true """)
+AND has_column_privilege(pg_class.oid, attname, 'SELECT') = true
+AND has_schema_privilege(n.nspname, 'USAGE') = true)
+AND has_table_privilege(concat_ws('.', '"' || n.nspname || '"', pg_class.relname), 'SELECT') = true """)
         for row in cur.fetchall():
             row_count, is_view, schema_name, table_name, *col_info = row
 
