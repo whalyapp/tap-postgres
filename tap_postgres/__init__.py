@@ -258,8 +258,7 @@ SELECT
                                         END,
                                        information_schema._pg_truetypmod(a.*, pgt.*))::information_schema.cardinal_number AS numeric_scale,
   pgt.typcategory                       = 'A' AS is_array,
-  COALESCE(subpgt.typtype, pgt.typtype) = 'e' AS is_enum,
-  concat_ws('.', '"' || n.nspname || '"', pg_class.relname) as table_path
+  COALESCE(subpgt.typtype, pgt.typtype) = 'e' AS is_enum
 FROM pg_attribute a
 LEFT JOIN pg_type AS pgt ON a.atttypid = pgt.oid
 JOIN pg_class
